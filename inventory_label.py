@@ -146,11 +146,6 @@ class InventoryLabel:
         image.save(outfile)
 
 
-# part_no = "GRM155R61A104KA01D"
-# part_description = "CAP CER 0.1UF 10V X5R 0402"
-# barcode_data = "[)>\x1e06\x1dP490-1318-1-ND\x1d1PGRM155R61A104KA01D\x04".encode("utf-8")
-# outfile = "label.png"
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("part_no", help="Part number")
@@ -161,5 +156,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     label = InventoryLabel()
     label.create_label(
-        args.part_no, args.description, args.barcode.encode('ascii'), args.outfile, debug=args.debug
+        args.part_no,
+        args.description,
+        args.barcode.encode("ascii"),
+        args.outfile,
+        debug=args.debug,
     )
