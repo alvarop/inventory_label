@@ -1,4 +1,5 @@
 import argparse
+import sys
 from textwrap import wrap
 from PIL import Image, ImageDraw, ImageFont
 from pylibdmtx.pylibdmtx import encode
@@ -11,11 +12,15 @@ class InventoryLabel:
     LABEL_WIDTH = int(2.440945 * DPI)
     MIN_LABEL_HEIGHT = int(0.7480315 * DPI)
     LABEL_MARGIN = 0  # int(0.05 * DPI)
-    FONT_NAME = "DejaVuSansMono.ttf"
+    DEFAULT_FONT = "DejaVuSansMono.ttf"
     MIN_FONT_SIZE = 33
 
-    def __init__(self):
+    def __init__(self, font_name):
         # Customize label width, height, etc here
+        if font_name:
+            self.font_name = font_name
+        else:
+            self.font_name = self.DEFAULT_FONT
         pass
 
     # Find font size that maximizes text size
@@ -24,7 +29,12 @@ class InventoryLabel:
         # TODO - Binary search for speed?
 
         while font_size < 1000:
-            text_font = ImageFont.truetype(font_name, font_size)
+            try:
+                text_font = ImageFont.truetype(font_name, font_size)
+            except OSError:
+                print("Unable to open font file {}".format(font_name))
+                sys.exit(1)
+
             current_width, current_height = self.draw.textsize(text, font=text_font)
             if current_width >= text_max_width or current_height >= text_max_height:
                 font_size -= 1
@@ -65,7 +75,11 @@ class InventoryLabel:
                 index += 1
             text = "\n".join(wrap(text, len(" ".join(split_text[:-index])) + 1))
 
-        font = ImageFont.truetype(font, font_size)
+        try:
+            font = ImageFont.truetype(font, font_size)
+        except OSError:
+            print("Unable to open font file {}".format(font_name))
+            sys.exit(1)
         text_width, text_height = self.draw.textsize(text, font=font)
 
         if align == "center":
@@ -125,7 +139,7 @@ class InventoryLabel:
             text_end,
             self.LABEL_MARGIN,
             int((image.height - 2 * self.LABEL_MARGIN) / 3.0 + self.LABEL_MARGIN),
-            self.FONT_NAME,
+            self.font_name,
             align="right",
         )
 
@@ -135,7 +149,7 @@ class InventoryLabel:
             text_end,
             int((image.height - 2 * self.LABEL_MARGIN) / 3.0 + self.LABEL_MARGIN),
             image.height - self.LABEL_MARGIN,
-            self.FONT_NAME,
+            self.font_name,
             align="right",
             multiline=True,
         )
@@ -143,7 +157,8 @@ class InventoryLabel:
         if debug:
             image.show()
 
-        image.save(outfile)
+        if outfile:
+            image.save(outfile)
 
 
 if __name__ == "__main__":
@@ -152,9 +167,10 @@ if __name__ == "__main__":
     parser.add_argument("description", help="Description")
     parser.add_argument("barcode", help="Barcode data")
     parser.add_argument("--outfile", help="output file")
+    parser.add_argument("--font", help="Font file to use")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     args = parser.parse_args()
-    label = InventoryLabel()
+    label = InventoryLabel(font_name=args.font)
     label.create_label(
         args.part_no,
         args.description,
