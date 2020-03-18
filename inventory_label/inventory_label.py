@@ -15,7 +15,7 @@ class InventoryLabel:
     DEFAULT_FONT = "DejaVuSansMono.ttf"
     MIN_FONT_SIZE = 33
 
-    def __init__(self, font_name):
+    def __init__(self, font_name=None):
         # Customize label width, height, etc here
         if font_name:
             self.font_name = font_name
