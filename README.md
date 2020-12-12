@@ -16,6 +16,11 @@ Linux:
 ```
 sudo apt-get install libdmtx0a
 ```
+or
+```
+sudo apt-get install libdmtx0b
+```
+
 
 MacOS:
 ```
