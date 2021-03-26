@@ -1,2 +1,2 @@
-Pillow==7.0.0
+Pillow==8.1.1
 pylibdmtx==0.1.9
