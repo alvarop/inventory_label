@@ -35,7 +35,8 @@ class InventoryLabel:
                 print("Unable to open font file {}".format(font_name))
                 sys.exit(1)
 
-            current_width, current_height = self.draw.textsize(text, font=text_font)
+            _, _, current_width, current_height = self.draw.textbbox((0,0), text, font=text_font)
+            
             if current_width >= text_max_width or current_height >= text_max_height:
                 font_size -= 1
                 break
@@ -80,7 +81,8 @@ class InventoryLabel:
         except OSError:
             print("Unable to open font file {}".format(font_name))
             sys.exit(1)
-        text_width, text_height = self.draw.textsize(text, font=font)
+        
+        _, _, text_width, text_height = self.draw.textbbox((0,0), text, font=font)
 
         if align == "center":
             text_x = int(stop_x - start_x - text_width / 2.0)
