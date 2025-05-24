@@ -3,3 +3,4 @@ venv/
 *.png
 *.egg-info
 __pycache__/
+build/
