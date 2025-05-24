@@ -6,7 +6,6 @@ from pylibdmtx.pylibdmtx import encode
 
 
 class InventoryLabel:
-
     DPI = 300
     # 62mm x 19mm labels
     LABEL_WIDTH = int(2.440945 * DPI)
@@ -24,7 +23,9 @@ class InventoryLabel:
         pass
 
     # Find font size that maximizes text size
-    def get_font_size(self, text, font_name, text_max_width, text_max_height):
+    def get_font_size(
+        self, text, font_name, text_max_width, text_max_height, align="center"
+    ):
         font_size = 1
         # TODO - Binary search for speed?
 
@@ -35,7 +36,9 @@ class InventoryLabel:
                 print("Unable to open font file {}".format(font_name))
                 sys.exit(1)
 
-            current_width, current_height = self.draw.textsize(text, font=text_font)
+            _, _, current_width, current_height = self.draw.textbbox(
+                (0, 0), text, text_font, align="center"
+            )
             if current_width >= text_max_width or current_height >= text_max_height:
                 font_size -= 1
                 break
@@ -58,7 +61,7 @@ class InventoryLabel:
     ):
         # use a truetype font
         font_size = self.get_font_size(
-            text, font, (stop_x - start_x), (stop_y - start_y)
+            text, font, (stop_x - start_x), (stop_y - start_y), align
         )
 
         # If multiline is allowed, check to see if the text needs to be wrapped
@@ -69,7 +72,7 @@ class InventoryLabel:
             while font_size <= self.MIN_FONT_SIZE and index < len(split_text):
                 line = " ".join(split_text[:-index])
                 font_size = self.get_font_size(
-                    line, font, (stop_x - start_x), (stop_y - start_y)
+                    line, font, (stop_x - start_x), (stop_y - start_y), align
                 )
 
                 index += 1
@@ -80,7 +83,10 @@ class InventoryLabel:
         except OSError:
             print("Unable to open font file {}".format(font_name))
             sys.exit(1)
-        text_width, text_height = self.draw.textsize(text, font=font)
+
+        _, _, text_width, text_height = self.draw.textbbox(
+            (0, 0), text, font, align=align
+        )
 
         if align == "center":
             text_x = int(stop_x - start_x - text_width / 2.0)

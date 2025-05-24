@@ -5,9 +5,9 @@ Quick script to generate labels with DataMatrix 2d barcode, part name, and part 
 ![Example label](sample_label.png)
 
 ## Installation
-### Create and activate virtualenv
+### Create and activate python virtual environment (venv)
 ```
-virtualenv venv
+ python3 -m venv venv
 source venv/bin/activate
 ```
 
