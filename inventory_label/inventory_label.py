@@ -39,6 +39,7 @@ class InventoryLabel:
             _, _, current_width, current_height = self.draw.textbbox(
                 (0, 0), text, text_font, align="center"
             )
+
             if current_width >= text_max_width or current_height >= text_max_height:
                 font_size -= 1
                 break
